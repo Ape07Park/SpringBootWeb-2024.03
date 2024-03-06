@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        input { padding: 3px; }
+    </style>
+</head>
+<body style="margin: 50px;">
+    <h1>사용자 수정</h1>
+    <hr>
+    <form action="/sb/user/update" method="post">
+        <!--th:value=${user.uid}에 th: 를 뺌 -->
+        <input type="hidden" name="uid" th:value=${user.uid}>
+        <input type="text" value="${user.uid}" disabled><br><br>
+
+        <input type="password" name="pwd" placeholder="패스워드"><br><br>
+        <input type="password" name="pwd2" placeholder="패스워드 확인"><br><br>
+        <input type="text" name="uname" placeholder="사용자 이름"><br><br>
+        <input type="text" name="email" placeholder="이메일"><br><br>
+        <input type="submit" value="수정">
+    </form>
+</body>
+</html>
