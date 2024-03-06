@@ -53,7 +53,7 @@ public class UserController {
 
 	// update
 	@GetMapping("/update")
-	public String update(@PathVariable String uid, Model model) {
+	public String update(String uid, Model model) {
 		User user = userSvc.getUserByUid(uid);
 		model.addAttribute("user", user);
 		return "user/update";
