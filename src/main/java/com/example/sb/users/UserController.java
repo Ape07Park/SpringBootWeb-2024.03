@@ -100,8 +100,12 @@ public class UserController {
 		int result = userSvc.login(uid, pwd);
 		if (result == userSvc.CORRECT_LOGIN) {
 			User user = userSvc.getUserByUid(uid);
-			session.setAttribute("sessUid", uid);
-			session.setAttribute("sessUname", user.getUname());
+			// 세션: 로그인 했다는 증표
+			// 그걸 id에 달고 있으면 로그인했다고 인식
+			
+			// session.setAttribute() : 세션에 값을 저장 
+			session.setAttribute("sessUid", uid); // 세션에 uid를 넣어 로그인하는 것, 세션 안에 있는 동안 로그인 유지
+			session.setAttribute("sessUname", user.getUname()); // unam에도 
 			msg = user.getUname() + "님 환영합니다.";
 			url = "/sb/user/list/1";
 		} else if (result == userSvc.WRONG_PASSWORD) {

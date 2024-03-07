@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/tl")
 public class ThymeleafController {
 	
+	// 태그
 	@GetMapping("/tag")
 	public String tag(Model model) {
 		model.addAttribute("name", "제임스");
@@ -24,7 +25,7 @@ public class ThymeleafController {
 		return "thymeleaf/tag.html";
 	}
 	
-	// 여기 부분 에러
+	// 표현식
 	@GetMapping("/el")
 	public String el(HttpSession session, Model model) {
 		Member m1 = new Member(101, "제임스", 25);
@@ -61,5 +62,38 @@ public class ThymeleafController {
 		// 파라미터만 확인하기 위해
 		return "<h1>uid=" + uid + ", page=" + page + "</h1>";
 	}
+	
+	@GetMapping("/iter")
+	public String iter(Model model) {
+		List<Member> list = new ArrayList<>();
+		list.add(new Member(101, "제임스", 25));
+		list.add(new Member(102, "마리아", 22));
+		list.add(new Member(103, "브라이언", 27));
+		list.add(new Member(104, "엠마", 21));
+		
+		model.addAttribute("memberList", list);
+		
+		return "thymeleaf/iter.html";
+	}
+	
+	
+	@GetMapping("/cond")
+	public String cond(Model model) {
+		List<Member> list = new ArrayList<>();
+		list.add(new Member(101, "제임스", 25));
+		list.add(new Member(102, "마리아", 22));
+		list.add(new Member(103, "브라이언", 27));
+		list.add(new Member(104, "엠마", 21));
+		
+		model.addAttribute("memberList", list);
+		
+		model.addAttribute("num1", 3);
+		model.addAttribute("num2", 4);
+		
+		
+		return "thymeleaf/cond.html";
+	}
+	
+	
 	
 }
