@@ -26,7 +26,12 @@
             <td th:text="${user.uname}">제임스</td>
             <td th:text="${user.email}">james@gamil.com</td>
             <td th:text="${user.regDate}">2024-03-06</td>
-            <td th:text="${user.pwd}">1234</td>           
+            
+            <!--더 공부해보기-->
+            <td>
+                <a th:href="@{/user/update/{x}(x=${user.uid})}">수정</a>
+                <a th:href="@{/user/delete/{x}(x=${user.uid})}">삭제</a>
+            </td>         
         </tr>
     </table>
 </body>

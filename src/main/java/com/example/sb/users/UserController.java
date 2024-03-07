@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller // 컨트롤러임을 알리기 위해
 @RequestMapping("/user") // sb/user 관련된 것은 여기 컨트롤러가 처리
 public class UserController {
@@ -26,11 +28,14 @@ public class UserController {
 	 */
 	
 	// "/list/{page}"의 page 값을 받아 @PathVariable int page 에 넣음
-	@GetMapping("/list/{page}") // get method 
-	public String list(@PathVariable int page, Model model) {
+	@GetMapping(value={"/list/{page}", "/list"} ) // get method 
+	public String list(@PathVariable(required=false) Integer page, Model model) {
+		page = (page == null) ? 1 : page;
 		List<User> list = userSvc.getUserList(page);
+		
 		// parameter.setAttribute 대신 사용
 		model.addAttribute("userList", list);
+		
 		return "user/list"; // rd.forward(request, response) 역할
 	}
 
@@ -52,8 +57,8 @@ public class UserController {
 	}
 
 	// update
-	@GetMapping("/update")
-	public String update(String uid, Model model) {
+	@GetMapping("/update/{uid}")
+	public String update(@PathVariable String uid, Model model) {
 		User user = userSvc.getUserByUid(uid);
 		model.addAttribute("user", user);
 		return "user/update";
@@ -61,23 +66,61 @@ public class UserController {
 
 	@PostMapping("/update")
 	public String updateProc(String uid, String pwd, String pwd2, String uname, String email) {
-		String hashedPwd = null;
-		
+		// 바뀌기 전 상태 가져옴. 왜냐하면 생성자로 만들 때 pwd 안바꾸면 바꾸기 전의 hashedPwd를 처리 힘듦 
+		User user = userSvc.getUserByUid(uid);
+		// pwd 고치기
 		if (pwd.equals(pwd2) && pwd != null) {
-			hashedPwd = BCrypt.hashpw(pwd, BCrypt.gensalt());
-			User user = new User(uid, hashedPwd, uname, email);
-			userSvc.updateUser(user);
+			String hashedPwd = BCrypt.hashpw(pwd, BCrypt.gensalt());
+			user.setPwd(hashedPwd);
 		}
-		return "redirect:/user/list/1";
+		
+		// 하나씩 uname, email 등 하나씩 고쳐나감 
+		user.setUname(uname);
+		user.setEmail(email);
+		userSvc.updateUser(user);
+		return "redirect:/user/list";
 	}
 
 	// delete
-	@GetMapping("/delete")
-	public String delete(String uid) {
+	@GetMapping("/delete/{uid}") //- /delete/1 하면 1번 지워지게 {uid} 추가했고 uid값 받기 위해 @PathVariable 추가  
+	public String delete(@PathVariable String uid) {
 		userSvc.deleteUser(uid);
-		return "user/list";
+		return "redirect:/user/list";
 	}
 	
+	// login
+	@GetMapping("/login")
+	public String login() {
+		return "user/login";
+	}
+	
+	@PostMapping("/login")
+	public String loginProc(String uid, String pwd, HttpSession session, Model model) {
+		String msg = null, url = null;
+		int result = userSvc.login(uid, pwd);
+		if (result == userSvc.CORRECT_LOGIN) {
+			User user = userSvc.getUserByUid(uid);
+			session.setAttribute("sessUid", uid);
+			session.setAttribute("sessUname", user.getUname());
+			msg = user.getUname() + "님 환영합니다.";
+			url = "/sb/user/list/1";
+		} else if (result == userSvc.WRONG_PASSWORD) {
+			msg = "패스워드가 틀립니다.";
+			url = "/sb/user/login";
+		} else {
+			msg = "아이디 입력이 잘못되었습니다.";
+			url = "/sb/user/login";
+		}
+		model.addAttribute("msg", msg);
+		model.addAttribute("url", url);
+		return "user/alertMsg";
+	}
+		
+	@GetMapping("/logout")
+	public String logout(HttpSession session) {
+		session.invalidate();
+		return "redirect:/user/login";
+	}
 	// syso 대신 사용
 	// log.info(member.toString());
 
