@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Member</title>
+  <style>
+    tr,
+    td {
+      text-align: center;
+    }
+  </style>
+  </style>
+</head>
+
+<body>
+  <h1>List</h1>
+  <table border="1">
+    <tr>
+      <th>번호</th>
+      <th>이름</th>
+      <th>나이</th>
+      <th>국적</th>
+    </tr>
+
+
+    <tr th:each="member, memberStat : ${memberList}">
+      <td th:text="${member.mid}"></td>
+
+      <td th:text="${member.name}"></td>
+
+      <td th:text="${member.age}"></td>
+
+      <td th:text="${member.country}"></td>
+    </tr>
+  </table>
+</body>
+
+</html>

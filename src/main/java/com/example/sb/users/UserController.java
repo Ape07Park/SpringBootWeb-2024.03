@@ -66,7 +66,7 @@ public class UserController {
 
 	@PostMapping("/update")
 	public String updateProc(String uid, String pwd, String pwd2, String uname, String email) {
-		// 바뀌기 전 상태 가져옴. 왜냐하면 생성자로 만들 때 pwd 안바꾸면 바꾸기 전의 hashedPwd를 처리 힘듦 
+		// 바뀌기 전 상태 가져옴. 왜냐하면 생성자로 만들 때 pwd 안바꾸면 바꾸기 전의 hashedPwd를 가져오는데 처리 힘듦 
 		User user = userSvc.getUserByUid(uid);
 		// pwd 고치기
 		if (pwd.equals(pwd2) && pwd != null) {
